@@ -9,7 +9,7 @@ namespace Converter
             var temp = File.ReadAllLines("data.txt");
             var personList = new Persons();
             personList.SetData(temp);
-            File.WriteAllText("result.txt", personList.ToJson());
+            File.WriteAllText("result.json", personList.ToJson());
         }
     }
 }

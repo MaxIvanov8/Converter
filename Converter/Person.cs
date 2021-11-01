@@ -18,42 +18,66 @@ namespace Converter
 
         private string _errorString;
 
+        private static readonly char[] DelimiterChars = { ' ', '\t' };
+
+        private static bool IsPhone(string field)
+        {
+            return field[0]>='0' && field[0]<='9' || field[0]=='+' || field[0] == '(';
+        }
+
         public Person(int id, string input)
         {
             Id = id;
-            var index = input.IndexOf(' ');
-            LastName = input[..index];
-            input = input[(index + 1)..];
-            index = input.IndexOfAny(new[] {' ', '\t'});
-            FirstName = input[..index];
-            input = input[(index + 1)..];
+            LastName = string.Empty;
+            FirstName = string.Empty;
             MiddleName = string.Empty;
-            if (input[0] >= 'А' && input[0] <= 'Я')
+            Phone = string.Empty;
+            if (!string.IsNullOrEmpty(input))
             {
-                index = input.IndexOfAny(new[] {' ', '\t'});
-                MiddleName = input[..index];
-                input = input[(index + 1)..];
-            }
+                var fields = input.Split(DelimiterChars,4);
+                var length = fields.Length;
+                if (IsPhone(fields.Last()))
+                {
+                    foreach (var character in fields.Last().Where(character => character is >= '0' and <= '9'))
+                        Phone += character;
+                    if (Phone[0] == '8')
+                        Phone = Phone.Remove(0, 1);
+                    if (Phone[0] != '7')
+                        Phone = Phone.Insert(0, "7");
+                    length -= 1;
+                }
 
-            foreach (var character in input.Where(character => character is >= '0' and <= '9'))
-                Phone += character;
-            if (Phone[0] == '8')
-                Phone = Phone.Remove(0, 1);
-            if (Phone[0] != '7')
-                Phone = Phone.Insert(0, "7");
+                switch (length)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        LastName = fields[0];
+                        break;
+                    case 2:
+                        LastName = fields[0];
+                        FirstName = fields[1];
+                        break;
+                    case 3:
+                        LastName = fields[0];
+                        FirstName = fields[1];
+                        MiddleName = fields[2];
+                        break;
+                }
+            }
             Validation();
         }
 
         private void Validation()
         {
             _errorString = string.Empty;
-            if (LastName.Length is > 50 or < 2)
+            if (LastName is{Length: > 50 or < 2})
                 _errorString += $"{nameof(LastName)} ";
-            if(FirstName.Length is > 50 or < 2)
+            if(FirstName is{Length: > 50 or < 2})
                 _errorString += $"{nameof(FirstName)} ";
-            if(MiddleName.Length is 1 or > 50)
+            if(MiddleName is {Length: 1 or > 50})
                 _errorString += $"{nameof(MiddleName)} ";
-            if(Phone.Length is > 11 or < 10)
+            if(Phone is {Length:> 11 or < 10})
                 _errorString += $"{nameof(Phone)} ";
         }
         [JsonIgnore]
