@@ -48,13 +48,13 @@ namespace Converter
         {
             _errorString = string.Empty;
             if (LastName.Length is > 50 or < 2)
-                _errorString += nameof(LastName);
+                _errorString += $"{nameof(LastName)} ";
             if(FirstName.Length is > 50 or < 2)
-                _errorString += nameof(FirstName);
+                _errorString += $"{nameof(FirstName)} ";
             if(MiddleName.Length is 1 or > 50)
-                _errorString += nameof(MiddleName);
+                _errorString += $"{nameof(MiddleName)} ";
             if(Phone.Length is > 11 or < 10)
-                _errorString += nameof(Phone);
+                _errorString += $"{nameof(Phone)} ";
         }
         [JsonIgnore]
         public string GetError => !string.IsNullOrEmpty(_errorString) ? $"{Id}: {_errorString}" : null;
