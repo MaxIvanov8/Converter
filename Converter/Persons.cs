@@ -15,7 +15,7 @@ namespace Converter
         public int Count => List.Count;
         private readonly List<string> _errorList;
         [JsonPropertyName("errors")]
-        public string ErrorString => _errorList.Aggregate(string.Empty, (current, error) => current + $"{error}, ");
+        public string ErrorString => _errorList.Aggregate(string.Empty, (current, error) => current + $"{error} ");
 
         public Persons()
         {
